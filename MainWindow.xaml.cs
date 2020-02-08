@@ -89,7 +89,6 @@ namespace mint
             string dest = "C:/Users/Brynndolin/Downloads";
             //get filedrop data
             //string[] files = (string[](DataFormats.FileDrop);
-            //for each image
             
         }
 
