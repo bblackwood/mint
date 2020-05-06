@@ -1,11 +1,11 @@
-﻿mint
+﻿miny
 
 
 winexe
 C#
 .cs
 I:\Visual Studio\repos\minty\obj\Debug\
-mint
+minty
 none
 false
 DEBUG;TRACE
@@ -16,5 +16,5 @@ I:\Visual Studio\repos\minty\App.xaml
 211198257353
 MainWindow.xaml;
 
-True
+False
 

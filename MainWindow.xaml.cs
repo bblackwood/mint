@@ -10,14 +10,14 @@ using System.Windows.Media.Animation;
 using System.ComponentModel;
 using System.Windows.Threading;
 
-namespace mint
+namespace minty
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class imgTopdf : Window
     {
-        public MainWindow()
+        public imgTopdf()
         {
             InitializeComponent();
 
@@ -55,6 +55,7 @@ namespace mint
         {
             if (filedrop.HasItems)
             {
+                fh.myfiles.Clear();
                 filedrop.ItemsSource = null;
                 clear.Visibility = Visibility.Hidden;
             }
@@ -67,7 +68,7 @@ namespace mint
             {
                 if (dropdown1_label.Text == "IMG" && dropdown2_label.Text == "PDF")
                 {
-                    imgTopdfAsync();
+                    ImgTopdf();
                 }
                 else if (dropdown1_label.Text == "pdf" && dropdown2_label.Text == "img")
                 {
@@ -77,8 +78,9 @@ namespace mint
             else
             {
                 output_log.Text = "no items in filedrop";
-                output_log.Opacity = 0;
-                outputlog_Opacity();
+                output_log.BeginAnimation(UIElement.OpacityProperty, new DoubleAnimation(1d, TimeSpan.FromSeconds(1)));
+                await Task.Delay(TimeSpan.FromSeconds(2));
+                output_log.BeginAnimation(UIElement.OpacityProperty, new DoubleAnimation(0d, TimeSpan.FromSeconds(1)));
             }
         }
 
@@ -87,10 +89,10 @@ namespace mint
             
         }
 
-        public async Task imgTopdfAsync()
+        public async void ImgTopdf()
         {
             string dest = "C:\\Users\\Brynndolin\\Downloads\\";
-            
+
 
             //get name of parent dir. this will be the new filename of our pdf.
             string file1 = System.IO.Directory.GetParent(fh.myfiles[0].filePath).FullName;
@@ -99,15 +101,10 @@ namespace mint
             //progress bar setup
             var progressBar = new Progress<int>(value => progress.Value = value);
             progress.Value = 0;
-
-            //animate opacity to fade in and out
-            //output_log.BeginAnimation(UIElement.OpacityProperty, new DoubleAnimation(1d, TimeSpan.FromSeconds(1.0)));
-            //progress.BeginAnimation(UIElement.OpacityProperty, new DoubleAnimation(1d, TimeSpan.FromSeconds(1.0)));
-            //await Task.Delay(TimeSpan.FromSeconds(0.5));
-            output_log.Opacity = 100;
-            progress.Opacity = 100;
-
+            output_log.Text = "";
+            progress.BeginAnimation(UIElement.OpacityProperty, new DoubleAnimation(1d, TimeSpan.FromSeconds(0.5)));
             PdfDocument doc = new PdfDocument();
+
             //create a pdf document and add images from filedrop
             for (int i = 0; i < fh.myfiles.Count; i++)
             {
@@ -126,9 +123,7 @@ namespace mint
                 page.Canvas.DrawImage(image, 0, 0, width, height);
 
                 //update progress bar
-                
                 progress.Value = i;
-                output_log.Text = "Exporting: " + progress.Value.ToString() + "%";
                 progress.Dispatcher.Invoke(() => progress.Value = i, DispatcherPriority.Background);
 
             }
@@ -140,15 +135,17 @@ namespace mint
 
             //update output log
             output_log.Text = "Exported '" + parent + ".pdf' to: " + dest;
-            await Task.Delay(TimeSpan.FromSeconds(1));
+            output_log.BeginAnimation(UIElement.OpacityProperty, new DoubleAnimation(1d, TimeSpan.FromSeconds(0.5)));
+            await Task.Delay(TimeSpan.FromSeconds(3));
 
-            //output_log.Opacity = 0;
-            //progress.Opacity = 0;
-            progress.BeginAnimation(UIElement.OpacityProperty, new DoubleAnimation(0d, TimeSpan.FromSeconds(1.0)));
-            output_log.BeginAnimation(UIElement.OpacityProperty, new DoubleAnimation(0d, TimeSpan.FromSeconds(1.0)));
-
+            output_log.BeginAnimation(UIElement.OpacityProperty, new DoubleAnimation(0d, TimeSpan.FromSeconds(0.5)));
+            progress.BeginAnimation(UIElement.OpacityProperty, new DoubleAnimation(0d, TimeSpan.FromSeconds(0.5)));
         }
 
+        public void ImgToIco()
+        {
+
+        }
         private void dropdown1_Click(object sender, RoutedEventArgs e)
         {
             if(filetype1.Visibility == Visibility.Hidden)
@@ -192,27 +189,27 @@ namespace mint
 
         private void minmax_Click(object sender, RoutedEventArgs e)
         {
-
+            if(this.WindowState == WindowState.Normal)
+            {
+                this.WindowState = WindowState.Maximized;
+                minmax.Content = "\uF5EF";
+            }
+            else
+            {
+                this.WindowState = WindowState.Normal;
+                minmax.Content = "\uE922";
+            }
         }
 
         private void minimize_Click(object sender, RoutedEventArgs e)
         {
-
+            this.WindowState = WindowState.Minimized;
         }
 
         private void titlebar_MouseDown(object sender, MouseButtonEventArgs e)
         {
             this.DragMove();
-        }
-        private  async void outputlog_Opacity()
-        {
-            //animate opacity to fade in and out
-            output_log.BeginAnimation(UIElement.OpacityProperty, new DoubleAnimation(1d, TimeSpan.FromSeconds(1.0)));
-            await Task.Delay(TimeSpan.FromSeconds(3));
-            output_log.BeginAnimation(UIElement.OpacityProperty, new DoubleAnimation(0d, TimeSpan.FromSeconds(1.0)));
-            await Task.Delay(TimeSpan.FromSeconds(1));
-        }
-        
+        }        
     }
 }
 
